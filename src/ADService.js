@@ -17,7 +17,8 @@ class ADService {
     this.response_mode = "query";
     this.tokenResult = {};
     this.secureStore = props.secureStore;
-    this.baseUri = `https://${this.tenant}.b2clogin.com/${this.tenant}.onmicrosoft.com`;
+    this.baseUri = `https://login.microsoftonline.com/te/${this.tenant}.onmicrosoft.com/`;
+    this.domainHint = props.domainHint;
 
     this.TokenTypeKey = "tokenType";
     this.AccessTokenKey = "accessToken";
@@ -160,6 +161,7 @@ class ADService {
       uri += `&redirect_uri=${this.redirectURI}`;
       uri += "&response_mode=query";
       uri += `&scope=${this.scope}`;
+      uri += `&domain_hint=${this.domainHint}`;
     }
     return uri;
   };
