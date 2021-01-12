@@ -27,7 +27,7 @@ pipeline {
                     }
                 }
 
-                archiveArtifacts artifacts: 'lib/dist/**/*', fingerprint: true   
+              //  archiveArtifacts artifacts: 'lib/dist/**/*', fingerprint: true   
             }
         }
 
