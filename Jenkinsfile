@@ -21,9 +21,9 @@ pipeline {
                     def message = "New Version " + PROJECT_VERSION + " - " + BRANCH_NAME
 
                     if(GIT_BRANCH == "master" || GIT_BRANCH == "develop"){
-                        dir('lib'){
+                       
                             bat 'npm publish'
-                        }
+                        
                     }
                 }
 
