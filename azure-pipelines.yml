@@ -63,14 +63,9 @@ stages:
         command: 'install'
         workingDir: '$(Build.SourcesDirectory)'
 
-    - task: CopyFiles@2
+    - task: Npm@1
+      condition: in('true', eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
       inputs:
-        Contents: '/**/*'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-        flattenFolders: true
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish the package'
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
+        command: 'publish'
+        workingDir: '$(Build.SourcesDirectory)'
+        publishEndpoint: 'NPMGithubSvetlinToken'
