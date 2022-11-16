@@ -46,13 +46,6 @@ stages:
           $npm_version = $ver.Split('.')[0] + '.' + $ver.Split('.')[1]+ '.' +$ver.Split('.')[3]
           write-host $npm_version
           Write-Host "##vso[task.setvariable variable=npm_version]$npm_version"
-
-           
-    # - task: NodeTool@0
-    #   inputs:
-    #     versionSource: 'spec'
-    #     versionSpec: '14.19.1'
-
     - task: Npm@1
       inputs:
         command: 'custom'
