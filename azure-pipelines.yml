@@ -36,6 +36,8 @@ stages:
         script: |
           mystring=$(version)
           echo $mystring > $(Build.SourcesDirectory)/mystring.txt
+          git config user.email "gyordanov@jhacorp.com" 
+          git config user.name "gyordanovvsg"
     - task: PowerShell@2
       inputs:
         targetType: 'inline'
@@ -50,6 +52,7 @@ stages:
     #   inputs:
     #     versionSource: 'spec'
     #     versionSpec: '14.19.1'
+
     - task: Npm@1
       inputs:
         command: 'custom'
