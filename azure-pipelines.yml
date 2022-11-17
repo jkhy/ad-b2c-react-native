@@ -1,7 +1,19 @@
 name: $(SourceBranchName)_$(buildVersion)
 
 trigger:
-- master
+ branches:
+    include:
+    - master
+    - develop
+    - feature/*
+    - support/*
+    - former/*
+pr:
+  - master
+  - develop
+  - feature/*
+  - support/*
+  - former/*
 
 resources:
   repositories:
