@@ -1,19 +1,64 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+name: $(SourceBranchName)_$(buildVersion)
 
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+resources:
+  repositories:
+   - repository: self
+   - repository: templates
+     type: github
+     name: jkhy/Jenkins-Shared-Pipeline-Libraries
+     ref: refs/heads/master
+     endpoint: VSGLoanVantage
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  vmImageName: 'ubuntu-latest'
+  buildVersion: $[format('{0}', counter('1', 0))]
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - template: azure-templates/jobs/setversion.yml@templates
+  - job: Build
+    dependsOn: BuildVersionSetter
+    displayName: Build
+    variables:
+    - name: version
+      value: $[ dependencies.BuildVersionSetter.outputs['buildsetter.assembly_version'] ]
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          mystring=$(version)
+          echo $mystring > $(Build.SourcesDirectory)/mystring.txt
+          git config user.email "gyordanov@jhacorp.com" 
+          git config user.name "gyordanovvsg"
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          $ver = get-content $(Build.SourcesDirectory)/mystring.txt -TotalCount 1
+          $npm_version = $ver.Split('.')[0] + '.' + $ver.Split('.')[1]+ '.' +$ver.Split('.')[3]
+          write-host $npm_version
+          Write-Host "##vso[task.setvariable variable=npm_version]$npm_version"
+    - task: Npm@1
+      inputs:
+        command: 'custom'
+        workingDir: '$(Build.SourcesDirectory)'
+        customCommand: 'version $(npm_version)'
+    - task: Npm@1
+      inputs:
+        command: 'install'
+        workingDir: '$(Build.SourcesDirectory)'
+
+    - task: Npm@1
+      condition: in('true', eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+      inputs:
+        command: 'publish'
+        workingDir: '$(Build.SourcesDirectory)'
+        publishEndpoint: 'NPMGithubSvetlinToken'
