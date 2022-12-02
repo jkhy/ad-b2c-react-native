@@ -8,9 +8,6 @@
     "index.js",
     "src"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/jkhy"
-  },
   "scripts": {
     "test": "jest",
     "upgrade-interactive": "npm-check --update"
