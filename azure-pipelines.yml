@@ -62,7 +62,7 @@ stages:
       inputs:
         command: 'custom'
         workingDir: '$(Build.SourcesDirectory)'
-        customCommand: 'version $(npm_version)'
+        customCommand: 'version $(npm_version) --force'
     - task: Npm@1
       inputs:
         command: 'install'
